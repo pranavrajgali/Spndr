@@ -1,0 +1,29 @@
+---
+description: Keep PROJECT_HANDOFF.md updated after every code change for editor handoff
+alwaysApply: true
+---
+
+# Update PROJECT_HANDOFF.md on every change
+
+When you **create, modify, or delete** any project code or config under `spendsense/` or repo-root docs for this app:
+
+1. **After completing the task**, update `PROJECT_HANDOFF.md` at the repo root.
+2. **Prepend** a new entry under `## Changelog (newest first)` using this format:
+
+```markdown
+### YYYY-MM-DD — Short title
+- **Ask:** What the user requested (one sentence)
+- **Changed:** `path/file` — what changed and why (bullet per file if multiple)
+- **Product:** What users can do now (behavior, not file names)
+- **Notes:** DB migrations, env vars, known bugs, follow-ups
+```
+
+3. Update **Last updated** date at the top of `PROJECT_HANDOFF.md`.
+4. Refresh **Current product status** table rows if feature status changed (Done / Partial / Stub).
+5. Adjust **Next up** checklist if items were completed or new work was identified.
+
+Do **not** skip this because the user switched topics or the change was small.
+
+If the user only asked for documentation with no code changes, still add a changelog entry when `PROJECT_HANDOFF.md` or other handoff docs were edited.
+
+For deep architectural explanation, link to `SpendSense_App_Architecture_and_Changes.md` instead of duplicating entire sections in the handoff log.

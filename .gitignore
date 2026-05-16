@@ -1,0 +1,42 @@
+# dependencies
+spendsense/node_modules
+spendsense/.pnp
+spendsense/.pnp.*
+spendsense/.yarn/*
+
+# testing
+spendsense/coverage
+
+# next.js
+spendsense/.next/
+spendsense/out/
+
+# production
+spendsense/build
+
+# misc
+.DS_Store
+*.pem
+.env.local
+.env.*.local
+.env
+spendsense/.env*
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# vercel
+spendsense/.vercel
+
+# typescript
+spendsense/*.tsbuildinfo
+spendsense/next-env.d.ts
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
