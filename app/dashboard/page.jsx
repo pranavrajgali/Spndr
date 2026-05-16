@@ -11,13 +11,14 @@ import Link from "next/link";
 export default async function DashboardPage() {
   const user = await getUser();
   const supabase = await createClient();
-  const { data: wallet } = user
-    ? await supabase
-        .from("wallets")
-        .select("balance")
-        .eq("user_id", user.id)
-        .maybeSingle()
-    : { data: null };
+  
+  const [walletRes, profileRes] = await Promise.all([
+    supabase.from("wallets").select("balance").eq("user_id", user.id).maybeSingle(),
+    supabase.from("user_profile").select("transfer_frequency, expected_transfer_day").eq("user_id", user.id).maybeSingle(),
+  ]);
+
+  const wallet = walletRes.data;
+  const profile = profileRes.data;
 
   return (
     <div className="space-y-6">
@@ -43,7 +44,11 @@ export default async function DashboardPage() {
           </div>
         )}
       </div>
-      <SurviveIndicator />
+      <SurviveIndicator 
+        balance={wallet?.balance || 0} 
+        frequency={profile?.transfer_frequency || 'monthly'} 
+        targetDay={profile?.expected_transfer_day} 
+      />
       <div className="grid gap-4 md:grid-cols-2">
         <SpendingDonut />
         <IncomeExpenseBar />

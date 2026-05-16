@@ -1,36 +1,70 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# SpendSense
+
+SpendSense is an AI-powered financial dashboard designed specifically for students. It combines automated transaction tracking, intelligent bank statement parsing, and personalized financial coaching into a single, cohesive experience.
+
+## Core Features
+
+- AI Financial Coach: A conversational assistant that provides personalized budgeting advice based on real-time spending data.
+- Intelligent Statement Import: Automated parsing of bank and UPI PDF statements using Vision AI and local extraction.
+- Context-Aware Dashboard: Real-time visualization of daily allowances, category breakdowns, and monthly trends.
+- Budget Guardrails: Category-specific spending limits with automated warnings and status indicators.
+- Wealth Tracking: Historical balance trends and wallet growth visualization.
+- Multi-Frequency Onboarding: Support for weekly, monthly, or flexible money transfer schedules.
+
+## Technology Stack
+
+- Framework: Next.js 16 (App Router)
+- Database: Supabase (PostgreSQL)
+- Authentication: Supabase Auth
+- AI Engine: Groq (Llama 3.3 70B for text, Llama 3.2 11B for Vision)
+- Styling: Vanilla CSS with Glassmorphic design principles
+- Charts: Recharts
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Node.js 18.x or later
+- Supabase account
+- Groq API key
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Installation
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/pranavrajgali/SpendSense.git
+   cd SpendSense
+   ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-## Learn More
+3. Set up environment variables:
+   Create a .env.local file in the root directory and add your credentials:
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   GROQ_API_KEY=your_groq_api_key
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+4. Database Setup:
+   Run the SQL found in `supabase/schema.sql` within your Supabase SQL Editor to initialize tables, triggers, and RLS policies.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+5. Run the development server:
+   ```bash
+   npm run dev
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Documentation
 
-## Deploy on Vercel
+For more detailed information, please refer to the documentation in the `docs/` directory:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- PROJECT_HANDOFF.md: Current project state and development log.
+- SpendSense_Guide.md: Product specification and roadmap.
+- SpendSense_App_Architecture_and_Changes.md: Architectural overview and logic explanations.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## License
+
+This project is licensed under the MIT License.

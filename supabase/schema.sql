@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS user_profile (
   display_name          TEXT,
   currency              TEXT DEFAULT 'INR',
   gold_price_per_gram   NUMERIC(10,2) DEFAULT 0,
+  transfer_frequency    TEXT DEFAULT 'monthly' CHECK (transfer_frequency IN ('monthly', 'weekly', 'flexible')),
   expected_transfer_day INT,
   avg_transfer_amount   NUMERIC(12,2) DEFAULT 0,
   created_at            TIMESTAMPTZ DEFAULT NOW()
@@ -37,7 +38,7 @@ CREATE TABLE IF NOT EXISTS transactions (
   amount      NUMERIC(12,2) NOT NULL,
   description TEXT NOT NULL,
   category    TEXT NOT NULL,
-  date        DATE NOT NULL DEFAULT CURRENT_DATE,
+  date        TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   source      TEXT DEFAULT 'manual',
   receipt_id  UUID,
   is_deleted  BOOLEAN DEFAULT FALSE,

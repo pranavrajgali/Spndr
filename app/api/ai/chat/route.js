@@ -17,6 +17,25 @@ export async function POST(request) {
 
   const supabase = await createClient();
 
+  // Fetch context (balance + last 10 transactions)
+  const [
+    { data: wallet },
+    { data: lastTxns }
+  ] = await Promise.all([
+    supabase.from("wallets").select("balance").eq("user_id", user.id).maybeSingle(),
+    supabase.from("transactions")
+      .select("type, amount, category, description, date")
+      .eq("user_id", user.id)
+      .eq("is_deleted", false)
+      .order("date", { ascending: false })
+      .limit(10)
+  ]);
+
+  const context = `
+    CURRENT_BALANCE: ${wallet?.balance || 0}
+    RECENT_TRANSACTIONS: ${JSON.stringify(lastTxns || [])}
+  `;
+
   await supabase.from("chat_messages").insert({
     user_id: user.id,
     role: "user",
@@ -25,7 +44,7 @@ export async function POST(request) {
 
   const completion = await chatCompletion(
     [
-      { role: "system", content: CHAT_SYSTEM_PROMPT },
+      { role: "system", content: CHAT_SYSTEM_PROMPT + `\nUSER_CONTEXT: ${context}` },
       { role: "user", content: message },
     ],
     MODELS.fast
@@ -34,8 +53,12 @@ export async function POST(request) {
   const raw = completion.choices[0]?.message?.content || "{}";
   let action = {};
   try {
-    action = JSON.parse(raw.replace(/```json|```/g, "").trim());
-  } catch {
+    // Robust JSON extraction
+    const jsonMatch = raw.match(/\{[\s\S]*\}/);
+    const jsonString = jsonMatch ? jsonMatch[0] : raw.replace(/```json|```/g, "").trim();
+    action = JSON.parse(jsonString);
+  } catch (e) {
+    console.error("AI Chat Parsing Failed:", raw);
     action = { action: "reply", reply: raw };
   }
 

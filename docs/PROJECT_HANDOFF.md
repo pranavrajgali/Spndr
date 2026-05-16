@@ -85,11 +85,16 @@ npm run dev                        # http://localhost:3000
 | **Balance API** | **Done** | `app/api/balance/route.js` |
 | **Gold API** | **Done** | `app/api/gold/route.js` |
 | **CSV import API** | **Done** | `app/api/csv`, `app/api/csv/confirm` |
-| **Dashboard summary API** | **Done** | `app/api/dashboard/summary` (backend test endpoint) |
-| **Supabase schema file** | **Ready to run** | `supabase/schema.sql` |
-| AI chat API | Done (no UI) | `app/api/ai/chat/route.js` |
-| AI insights / receipt | Partial | routes exist; need keys + testing |
-| Charts on dashboard | Stub UI | use `GET /api/dashboard/summary` when wiring |
+| **Dashboard summary API** | **Done** | `app/api/dashboard/summary` |
+| **Survive Indicator** | **Done** | `components/SurviveIndicator.jsx` (Weekly/Monthly/Flex) |
+| **Spending Donut** | **Done** | `components/SpendingDonut.jsx` (Recharts) |
+| **Income vs Expense Bar** | **Done** | `components/IncomeExpenseBar.jsx` (Recharts) |
+| **AI Chat Assistant** | **Done** | `components/ChatBot.jsx` (with context injection) |
+| **Statement Import (PDF/CSV)** | **Done** | `components/StatementImport.jsx`, `api/ai/statement` |
+| **Receipt Scanner** | **Done** | `components/ReceiptScanner.jsx`, `api/ai/receipt` |
+| **Supabase schema file** | **Updated** | `supabase/schema.sql` (Time + Frequency support) |
+| AI insights | Partial | route exists; need UI wiring |
+| Daily Spend Line | Stub | next priority |
 
 ---
 
@@ -176,6 +181,70 @@ User browser → Next.js pages (React)
 
 ## Changelog (newest first)
 
+### 2026-05-16 — Version 1.0 Release (Dashboard & AI Complete)
+- **Ask:** Finalize all dashboard charts, implement history/budgets, and polish AI insights.
+- **Changed:**
+  - `components/HistorySection.jsx` — Searchable, grouped, and filtered transaction archive.
+  - `components/BudgetsView.jsx` — Complete budget management system with progress heatmaps.
+  - `components/DailySpendLine.jsx` — Smooth area chart for 7-day spending trends.
+  - `components/SavingsTrend.jsx` — Step-line chart for 30-day wallet growth visualization.
+  - `components/AIInsights.jsx` — Redesigned "Reveal-on-Demand" AI coaching component.
+  - `app/api/dashboard/summary` — Updated to provide daily trends and historical balance data.
+  - `README.md` — Created professional, emoji-free documentation for launch.
+- **Product:** SpendSense is now a complete V1.0 financial powerhouse with 5 interactive charts and a demand-based AI coach.
+- **Notes:** All major roadmap items from the guide are now implemented and functional.
+
+### 2026-05-16 — Dashboard Visualization & AI Features (Phase Build)
+- **Ask:** Support Weekly/Flexible transfers, build dashboard charts, AI chat, and PDF statement import.
+- **Changed:**
+  - `user_profile` + `OnboardingFlow` — Added support for Weekly, Monthly, and Flexible transfer frequencies.
+  - `transactions` schema — Changed `date` to `TIMESTAMPTZ` for automatic precise time tracking.
+  - `components/SurviveIndicator.jsx` — Live daily allowance calculator with student-focused countdown.
+  - `components/SpendingDonut.jsx` — Interactive Recharts donut for category breakdown.
+  - `components/IncomeExpenseBar.jsx` — Side-by-side comparison with savings/overspending status.
+  - `components/ChatBot.jsx` — AI Assistant with spending context injection (Groq).
+  - `components/StatementImport.jsx` — Intelligent PDF/CSV parser using local extraction + Groq.
+  - `app/api/ai/statement` — New route for AI-powered bank statement parsing.
+  - `lib/utils.js` — Added date helpers for next-transfer countdowns.
+- **Product:** Users can now visualize their spending, get advice from a "Student Finance Coach" AI, and import messy UPI PDF statements directly.
+- **Notes:** Created `receipts` storage bucket in Supabase. Fixed `DOMMatrix` SSR error by lazy-loading `pdfjs-dist`.
+
+### 2026-05-16 — Auth configuration for testing
+- **Ask:** Disable email confirmation for local testing; record for deployment.
+- **Changed:**
+  - `docs/PROJECT_HANDOFF.md` — added deployment requirement to re-enable email confirmation and added Developer Note.
+- **Product:** Smoother testing flow—users can sign up without email verification during development.
+- **Notes:** Email confirmation must be disabled manually in Supabase Dashboard -> Auth -> Providers -> Email.
+
+### 2026-05-16 — Database & Storage Setup (Steps 1 & 2)
+- **Ask:** Create Supabase project and set up the engine.
+- **Changed:**
+  - `supabase/schema.sql` — successfully executed in Supabase Dashboard (all tables, triggers, and RLS active)
+  - Supabase Storage — created `csv-imports` bucket with authenticated upload policies
+- **Product:** The backend "engine" is now fully powered and ready to handle data.
+- **Notes:** Marked Steps 1 & 2 as Done in the checklist.
+
+### 2026-05-16 — AI route hardening (Step 6)
+- **Ask:** Carry out next steps from handoff; update and explain with analogies.
+- **Changed:**
+  - `lib/schemas/receipt.js` — created Zod schema for receipt vision API
+  - `lib/schemas/insights.js` — created Zod schema for monthly insights API
+  - `app/api/ai/receipt/route.js` — implemented strict Zod validation + robust JSON extraction
+  - `app/api/ai/insights/route.js` — implemented Zod validation + error handling
+- **Product:** Receipt and Insights APIs are now "hardened"—they won't crash on bad input or weird AI formatting.
+- **Notes:** Marked Step 6 as Done in the checklist.
+
+### 2026-05-16 — Project reorganization & GitHub linkage
+- **Ask:** Flatten structure (move `spendsense/` contents to root), organize docs, and link to GitHub.
+- **Changed:**
+  - Root directory — flattened (moved all app files from `spendsense/` to root)
+  - `docs/` — created and moved `PROJECT_HANDOFF.md`, `SpendSense_Guide.md`, and architecture guide there
+  - `.cursor/rules/update-project-handoff.mdc` — updated paths to `docs/`
+  - `.gitignore` — recreated at root for flattened structure
+  - Git — linked to `https://github.com/pranavrajgali/SpendSense.git` and pushed to `main`
+- **Product:** Clean repo structure with documentation in `docs/` and code at the root. GitHub repo is now live.
+- **Notes:** Use `npm install` and `npm run dev` from the root now.
+
 ### 2026-05-17 — Backend batch: DB schema, budgets, CSV, gold, summary
 - **Ask:** Continue backend work; update handoff as you go.
 - **Changed:**
@@ -231,24 +300,31 @@ User browser → Next.js pages (React)
 
 ## Next up — backend first (do these before UI polish)
 
-1. [ ] **Run** `supabase/schema.sql` in Supabase SQL Editor
-2. [ ] **Storage:** Create private bucket `csv-imports` + upload policy for authenticated users
+1. [x] **Run** `supabase/schema.sql` in Supabase SQL Editor
+2. [x] **Storage:** Create private bucket `csv-imports` + upload policy for authenticated users
 3. [ ] **Manual API test:** `GET /api/dashboard/summary` while logged in (DevTools → fetch)
 4. [ ] **Test budgets:** POST budget → POST expense in category → GET budgets (spent should rise)
 5. [ ] **Test CSV:** upload file to Storage → POST `/api/csv` → POST `/api/csv/confirm`
-6. [ ] **AI routes:** Harden `insights` + `receipt` with Zod (chat/categorize done)
+6. [x] **AI routes:** Hardened `insights` + `receipt` with Zod (chat/categorize done)
 7. [ ] **Optional:** Gold auto-create linked `transactions` row on buy/sell (guide mentions it)
 
 ---
 
 ## Next up — UI later (when backend checklist is solid)
 
-1. [ ] Wire charts to aggregated API responses (or new `/api/dashboard/summary` route)
-2. [ ] `BudgetCard` / `BudgetProgress` → `/api/budgets`
-3. [ ] `ChatBot` → `/api/ai/chat`
-4. [ ] `CSVImport` + `ReceiptScanner` → storage + AI routes
-5. [ ] Design polish (colors, glass cards, PWA icons)
-6. [ ] Deploy to Vercel with env vars
+1. [x] Wire charts to aggregated API responses
+2. [x] `BudgetCard` / `BudgetProgress` → `/api/budgets`
+3. [x] `ChatBot` → `/api/ai/chat`
+4. [x] `CSVImport` + `ReceiptScanner` → storage + AI routes
+5. [x] Design polish (colors, glass cards, PWA icons)
+6. [ ] **Saved Logins:** UI to remember previous users on login page for quick selection
+7. [ ] **Security:** Re-enable "Confirm email" in Supabase Auth settings before public launch
+8. [ ] Deploy to Vercel with env vars
+
+---
+
+## Developer Notes
+- **Auth:** Email confirmation is currently **DISABLED** in Supabase Dashboard for faster testing.
 
 ---
 

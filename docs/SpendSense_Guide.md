@@ -575,6 +575,7 @@ npx shadcn@latest add button input card dialog sheet badge tabs select toast pro
 
 - Signup with email/password via Supabase Auth
 - Login page with Google OAuth option
+- **Saved Logins:** UI remembers previously logged-in users for quick one-tap selection
 - After signup: onboarding screen asks for current balance and display name
 - Creates `user_profile` and `wallets` rows on first login
 - `middleware.js` redirects unauthenticated users away from `/dashboard`

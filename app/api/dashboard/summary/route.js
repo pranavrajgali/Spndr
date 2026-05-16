@@ -68,6 +68,50 @@ export async function GET(request) {
     return pct >= (b.alert_at_percent ?? 80);
   });
 
+  // Daily spending for the last 7 days
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  
+  const dailySpending = {};
+  // Initialize with zeros for last 7 days
+  for (let i = 0; i < 7; i++) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    dailySpending[d.toISOString().slice(0, 10)] = 0;
+  }
+
+  for (const t of txns ?? []) {
+    const d = new Date(t.date).toISOString().slice(0, 10);
+    if (t.type === "expense" && dailySpending[d] !== undefined) {
+      dailySpending[d] += Math.abs(Number(t.amount));
+    }
+  }
+
+  const dailyTrend = Object.entries(dailySpending)
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .map(([date, amount]) => ({ date, amount }));
+
+  // Balance trend (last 30 days) - Working backwards from current balance
+  const balanceTrend = [];
+  let currentRunningBalance = Number(wallet?.balance ?? 0);
+  
+  // Sort transactions by date descending to subtract them backwards
+  const sortedTxns = [...(txns ?? [])].sort((a, b) => new Date(b.date) - new Date(a.date));
+  
+  for (let i = 0; i < 30; i++) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const dateStr = d.toISOString().slice(0, 10);
+    
+    balanceTrend.push({ date: dateStr, balance: currentRunningBalance });
+
+    // Subtract transactions that happened on this day to find the previous day's balance
+    const dayTxns = sortedTxns.filter(t => new Date(t.date).toISOString().slice(0, 10) === dateStr);
+    for (const t of dayTxns) {
+      currentRunningBalance -= Number(t.amount);
+    }
+  }
+
   return NextResponse.json({
     month,
     year,
@@ -79,5 +123,7 @@ export async function GET(request) {
     spending_by_category: byCategory,
     budgets_at_risk: budgetsAtRisk,
     total_transactions_all_time: txnCount ?? 0,
+    daily_trend: dailyTrend,
+    balance_trend: balanceTrend.reverse(),
   });
 }
