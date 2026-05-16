@@ -1,14 +1,14 @@
 # SpendSense App — Architecture & Implementation Guide
 
-> **Living changelog & handoff:** See [`PROJECT_HANDOFF.md`](./PROJECT_HANDOFF.md) for the always-updated status matrix, file map, and session-by-session change log. That file is the one to open when switching editors or AI tools.
+> **Living changelog & handoff:** See [`docs/PROJECT_HANDOFF.md`](./docs/PROJECT_HANDOFF.md) for the always-updated status matrix, file map, and session-by-session change log. That file is the one to open when switching editors or AI tools. After you change code, append a new changelog entry to docs/PROJECT_HANDOFF.md (newest first). Do not skip updating docs/PROJECT_HANDOFF.md.
 
-This document explains **what was built** inside the `spendsense/` folder, **how the pieces fit together**, and **how that affects the product** for someone new to Next.js full-stack apps. It assumes you know basic programming (variables, HTTP, databases at a high level).
+This document explains **what was built** inside the root folder, **how the pieces fit together**, and **how that affects the product** for someone new to Next.js full-stack apps. It assumes you know basic programming (variables, HTTP, databases at a high level).
 
 ---
 
 ## 1. What is this project?
 
-**SpendSense** is a web app idea from your `SpendSense_Guide.md`: students track spending without linking a bank. The **executable code** lives in **`spendsense/`** (lowercase folder name — npm packages cannot use capital letters in the root `package.json` name).
+**SpendSense** is a web app idea from your `docs/SpendSense_Guide.md`: students track spending without linking a bank. The **executable code** lives at the **repo root**.
 
 | Piece | Role (simple analogy) |
 | ------ | ---------------------- |
@@ -43,7 +43,7 @@ That pattern — **React calls `fetch("/api/...")`** — is repeated for budgets
 ## 3. Folder map (mental model)
 
 ```
-spendsense/
+root/
 ├── app/                    # Pages AND API routes (file = URL)
 │   ├── layout.jsx          # Wrapper for ALL pages (font, manifest)
 │   ├── page.jsx            # Landing “/”
@@ -54,6 +54,7 @@ spendsense/
 │   ├── dashboard/          # Logged-in area
 │   └── api/                # Backend endpoints
 ├── components/             # Reusable UI (some are still placeholders)
+├── docs/                   # Handoff, guides, and spec
 ├── lib/                    # Shared logic (clients, schemas, prompts)
 ├── middleware.js           # Runs before many requests — auth redirects
 ├── public/                 # Static files (icons, manifest)

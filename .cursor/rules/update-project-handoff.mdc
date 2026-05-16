@@ -1,13 +1,13 @@
 ---
-description: Keep PROJECT_HANDOFF.md updated after every code change for editor handoff
+description: Keep docs/PROJECT_HANDOFF.md updated after every code change for editor handoff
 alwaysApply: true
 ---
 
-# Update PROJECT_HANDOFF.md on every change
+# Update docs/PROJECT_HANDOFF.md on every change
 
-When you **create, modify, or delete** any project code or config under `spendsense/` or repo-root docs for this app:
+When you **create, modify, or delete** any project code or config at the repo root or in `docs/`:
 
-1. **After completing the task**, update `PROJECT_HANDOFF.md` at the repo root.
+1. **After completing the task**, update `PROJECT_HANDOFF.md` in the `docs/` folder.
 2. **Prepend** a new entry under `## Changelog (newest first)` using this format:
 
 ```markdown
