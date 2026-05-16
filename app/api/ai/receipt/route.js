@@ -1,7 +1,7 @@
 import { getUser } from "@/lib/supabase-server";
-import { groq, MODELS } from "@/lib/groq";
+import { chatCompletion, MODELS } from "@/lib/groq";
+import { EXPENSE_CATEGORIES } from "@/lib/categories";
 import { NextResponse } from "next/server";
-import { ReceiptRequestSchema, ReceiptResponseSchema } from "@/lib/schemas/receipt";
 
 export async function POST(request) {
   try {
@@ -10,61 +10,58 @@ export async function POST(request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await request.json();
-    const validatedInput = ReceiptRequestSchema.safeParse(body);
-
-    if (!validatedInput.success) {
-      return NextResponse.json(
-        { error: "Invalid input", details: validatedInput.error.format() },
-        { status: 400 }
-      );
+    const { text } = await request.json();
+    if (!text || text.trim().length < 3) {
+      return NextResponse.json({ error: "No text extracted from receipt" }, { status: 400 });
     }
 
-    const { imageUrl } = validatedInput.data;
-
-    // Determine if it's a URL or base64
-    const imageContent = imageUrl.startsWith('data:') 
-      ? { url: imageUrl } // Groq supports data URLs
-      : { url: imageUrl };
-
-    const completion = await groq.chat.completions.create({
-      model: MODELS.vision,
-      messages: [
+    const completion = await chatCompletion(
+      [
+        {
+          role: "system",
+          content: `You extract receipt data from OCR text. The text may be messy/noisy.
+Find: merchant name, total amount in INR (the FINAL amount paid, not subtotals), date, and category.
+Category MUST be one of: [${EXPENSE_CATEGORIES.join(", ")}]
+Return ONLY valid JSON: {"merchant":"name","amount":123.45,"date":"YYYY-MM-DD","category":"category name"}
+If you can't find a value, use reasonable defaults. Amount should be a number, not a string.`,
+        },
         {
           role: "user",
-          content: [
-            {
-              type: "text",
-              text: "Extract merchant name, total amount (as a number in INR), and date from this receipt. Return ONLY JSON: {\"merchant\":\"\",\"amount\":0,\"date\":\"YYYY-MM-DD\"}",
-            },
-            { type: "image_url", image_url: imageContent },
-          ],
+          content: `Parse this receipt text:\n${text}`,
         },
       ],
-      temperature: 0, // Lower temperature for more consistent JSON
-    });
+      MODELS.insights // Using the 70B model for better accuracy
+    );
 
     const raw = completion.choices[0]?.message?.content || "{}";
+    console.log("Receipt OCR Parse Response:", raw);
+
     let parsed = {};
     try {
-      // Robust JSON extraction in case the AI adds markdown blocks
-      const jsonMatch = raw.match(/\{[\s\S]*\}/);
-      const jsonString = jsonMatch ? jsonMatch[0] : raw;
-      parsed = JSON.parse(jsonString);
+      const start = raw.indexOf("{");
+      const end = raw.lastIndexOf("}");
+      if (start !== -1 && end !== -1) {
+        parsed = JSON.parse(raw.substring(start, end + 1));
+      }
     } catch (e) {
-      console.error("AI Response parsing failed:", raw);
-      parsed = {};
+      console.error("Receipt parse failed:", raw);
     }
 
-    // Validate AI output against schema to ensure defaults are applied
-    const validatedOutput = ReceiptResponseSchema.parse(parsed);
+    // Clean amount if string
+    if (typeof parsed.amount === "string") {
+      parsed.amount = parseFloat(parsed.amount.replace(/[^\d.]/g, "")) || 0;
+    }
 
-    return NextResponse.json({ data: validatedOutput });
+    return NextResponse.json({
+      data: {
+        merchant: parsed.merchant || "Unknown",
+        amount: parsed.amount || 0,
+        date: parsed.date || new Date().toISOString().slice(0, 10),
+        category: parsed.category || "Other",
+      },
+    });
   } catch (error) {
-    console.error("Receipt API Error:", error);
-    return NextResponse.json(
-      { error: "Failed to process receipt" },
-      { status: 500 }
-    );
+    console.error("Receipt OCR API Error:", error);
+    return NextResponse.json({ error: "Failed to parse receipt text" }, { status: 500 });
   }
 }

@@ -66,7 +66,7 @@ export default function SavingsTrend() {
       </div>
 
       <div className="flex-1 -ml-6 -mr-2">
-        <ResponsiveContainer width="100%" height="100%">
+        <ResponsiveContainer width="100%" height="100%" minWidth={100} minHeight={100}>
           <AreaChart data={data}>
             <defs>
               <linearGradient id="colorBalance" x1="0" y1="0" x2="0" y2="1">

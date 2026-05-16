@@ -69,7 +69,7 @@ export async function POST(request) {
       action.type === "expense"
         ? -Math.abs(action.amount)
         : Math.abs(action.amount);
-    const dateStr = new Date().toISOString().slice(0, 10);
+    const dateStr = new Date().toISOString(); // Full timestamp
     const { data } = await supabase
       .from("transactions")
       .insert({

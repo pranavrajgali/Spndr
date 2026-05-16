@@ -75,7 +75,7 @@ export async function POST(request) {
   }
 
   const amount = signedAmountForInsert(body.type, body.amount);
-  const dateStr = parsedDate.toISOString().slice(0, 10);
+  const dateStr = new Date().toISOString(); // Full timestamp with time
 
   const supabase = await createClient();
   const { data, error } = await supabase

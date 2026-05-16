@@ -91,10 +91,14 @@ npm run dev                        # http://localhost:3000
 | **Income vs Expense Bar** | **Done** | `components/IncomeExpenseBar.jsx` (Recharts) |
 | **AI Chat Assistant** | **Done** | `components/ChatBot.jsx` (with context injection) |
 | **Statement Import (PDF/CSV)** | **Done** | `components/StatementImport.jsx`, `api/ai/statement` |
-| **Receipt Scanner** | **Done** | `components/ReceiptScanner.jsx`, `api/ai/receipt` |
-| **Supabase schema file** | **Updated** | `supabase/schema.sql` (Time + Frequency support) |
-| AI insights | Partial | route exists; need UI wiring |
-| Daily Spend Line | Stub | next priority |
+| **Receipt Scanner** | **Done** | `ReceiptScanner.jsx` (Tesseract.js OCR + Groq text) |
+| **Supabase schema file** | **Updated** | `supabase/schema.sql` (TIMESTAMPTZ) |
+| **AI Insights** | **Done** | `AIInsights.jsx` (reveal-on-demand) |
+| **Daily Spend Line** | **Done** | `DailySpendLine.jsx` (7-day area chart) |
+| **Savings Trend** | **Done** | `SavingsTrend.jsx` (30-day balance) |
+| **History** | **Done** | `HistorySection.jsx` (search + filter + group) |
+| **Budgets** | **Done** | `BudgetsView.jsx` (progress + heatmap) |
+| **User Management** | **Done** | `Navbar.jsx` (logout + delete), `api/user/delete` |
 
 ---
 
@@ -165,21 +169,44 @@ User browser → Next.js pages (React)
 
 | Component | Status | Used on |
 |-----------|--------|---------|
-| `TransactionForm` | Implemented | `/dashboard/transactions` |
-| `TransactionList` | Implemented | same |
-| `TransactionsView` | Implemented | wires form + list refresh |
-| `OnboardingFlow` | Implemented | `/onboarding` |
-| `Navbar`, `BottomNav` | Implemented | dashboard layout |
-| `SpendingDonut`, `IncomeExpenseBar`, `DailySpendLine`, `SavingsTrend` | Stub | dashboard |
-| `BudgetCard`, `BudgetProgress` | Stub | budgets page |
-| `ReceiptScanner` | Stub | receipts page |
+| `TransactionForm` | **Done** | `/dashboard/transactions` |
+| `TransactionList` | **Done** | same |
+| `TransactionsView` | **Done** | wires form + list + scanner |
+| `OnboardingFlow` | **Done** | `/onboarding` |
+| `Navbar` | **Done** | dashboard layout (logout + delete account) |
+| `BottomNav` | **Done** | dashboard layout |
+| `SpendingDonut` | **Done** | dashboard |
+| `IncomeExpenseBar` | **Done** | dashboard |
+| `DailySpendLine` | **Done** | dashboard |
+| `SavingsTrend` | **Done** | dashboard |
+| `BudgetsView` | **Done** | `/dashboard/budgets` |
+| `ReceiptScanner` | **Done** | `/dashboard/transactions` (Tesseract.js OCR) |
+| `ChatBot` | **Done** | `/dashboard/chat` (Savage Coach) |
+| `StatementImport` | **Done** | `/dashboard/chat` (PDF/CSV) |
+| `HistorySection` | **Done** | `/dashboard/history` (search + filter) |
+| `AIInsights` | **Done** | dashboard (reveal-on-demand) |
+| `SurviveIndicator` | **Done** | dashboard |
 | `GoldTracker`, `GoldChart` | Stub | gold page |
-| `ChatBot`, `CSVImport` | Stub | chat page |
-| `HistorySection`, `AIInsights`, `SurviveIndicator` | Stub | history / dashboard |
 
 ---
 
 ## Changelog (newest first)
+
+### 2026-05-16 — Version 1.1 (Polish, OCR, Auth, Savage Mode)
+- **Ask:** Fix receipt scanner, add user management, improve timestamps, and add personality.
+- **Changed:**
+  - `components/ReceiptScanner.jsx` — Complete rewrite using Tesseract.js (in-browser OCR) + Groq text parsing. No vision model needed.
+  - `components/Navbar.jsx` — Added user menu with Sign Out and Delete Account features.
+  - `app/api/user/delete/route.js` — New API to wipe all user financial data.
+  - `lib/groq.js` — "Savage Finance Coach" persona: witty, critical, Indian student slang.
+  - `app/api/ai/insights/route.js` — Updated to savage/roast tone.
+  - `app/api/transactions/route.js` — Full ISO timestamps (not date-only) for correct IST display.
+  - `app/api/ai/chat/route.js` — Same timestamp fix + better JSON extraction.
+  - `lib/schemas/receipt.js` — Removed strict URL validation; added category field.
+  - All chart components — Added `minWidth`/`minHeight` to fix Recharts container warnings.
+  - `components/TransactionsView.jsx` — Manual entry first, scanner below (UX improvement).
+- **Product:** Receipt scanner works without vision API. Users can logout/switch/delete. AI has personality. Timestamps are accurate.
+- **Notes:** Installed `tesseract.js` for browser-side OCR. Groq vision models not available on free tier.
 
 ### 2026-05-16 — Version 1.0 Release (Dashboard & AI Complete)
 - **Ask:** Finalize all dashboard charts, implement history/budgets, and polish AI insights.

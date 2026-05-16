@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import { Camera, Loader2, Check, AlertCircle, Trash2 } from "lucide-react";
+import { useState, useRef } from "react";
+import { Camera, Loader2, Check, AlertCircle, Trash2, ScanLine } from "lucide-react";
 import { createClient } from "@/lib/supabase";
 import { formatCurrency, cn } from "@/lib/utils";
 
 export default function ReceiptScanner() {
   const [loading, setLoading] = useState(false);
+  const [ocrProgress, setOcrProgress] = useState(0);
   const [preview, setPreview] = useState(null);
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
@@ -19,34 +20,45 @@ export default function ReceiptScanner() {
     setLoading(true);
     setError("");
     setResult(null);
+    setOcrProgress(0);
     setPreview(URL.createObjectURL(file));
 
     try {
-      const supabase = createClient();
+      // Step 1: OCR in the browser using Tesseract.js
+      setOcrProgress(10);
+      const Tesseract = (await import("tesseract.js")).default;
       
-      // 1. Upload to Supabase Storage
-      const fileName = `${Date.now()}-${file.name}`;
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from("receipts")
-        .upload(fileName, file);
+      setOcrProgress(30);
+      const { data } = await Tesseract.recognize(file, "eng", {
+        logger: (m) => {
+          if (m.status === "recognizing text") {
+            setOcrProgress(30 + Math.round(m.progress * 50));
+          }
+        },
+      });
 
-      if (uploadError) throw new Error("Failed to upload image: " + uploadError.message);
+      const ocrText = data.text;
+      setOcrProgress(85);
 
-      // 2. Convert to Base64 for the AI (more reliable than URL)
-      const base64 = await fileToBase64(file);
+      if (!ocrText || ocrText.trim().length < 5) {
+        throw new Error("Could not read any text from the image. Try a clearer photo.");
+      }
 
-      // 3. Call AI Vision API
+      // Step 2: Send extracted text to Groq for parsing
+      setOcrProgress(90);
       const res = await fetch("/api/ai/receipt", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ imageUrl: base64 }),
+        body: JSON.stringify({ text: ocrText }),
       });
-      const data = await res.json();
+      const parsed = await res.json();
 
-      if (data.data) {
-        setResult(data.data);
+      setOcrProgress(100);
+
+      if (parsed.data) {
+        setResult(parsed.data);
       } else {
-        throw new Error(data.error || "AI failed to read receipt");
+        throw new Error(parsed.error || "AI failed to parse receipt text");
       }
     } catch (err) {
       setError(err.message);
@@ -65,7 +77,7 @@ export default function ReceiptScanner() {
       type: "expense",
       amount: -Math.abs(result.amount),
       description: result.merchant || "Receipt Upload",
-      category: "Other", // Vision AI could also guess this, but let's keep it simple
+      category: result.category || "Other",
       date: result.date || new Date().toISOString().slice(0, 10),
       source: "receipt",
     });
@@ -77,18 +89,8 @@ export default function ReceiptScanner() {
       setResult(null);
       setPreview(null);
       setTimeout(() => setSuccess(false), 3000);
-      window.location.reload();
     }
     setLoading(false);
-  }
-
-  async function fileToBase64(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = (error) => reject(error);
-    });
   }
 
   return (
@@ -96,9 +98,9 @@ export default function ReceiptScanner() {
       <div className="flex items-center justify-between mb-4">
         <div>
           <h3 className="text-sm font-bold text-[#134E4A]">Receipt Scanner</h3>
-          <p className="text-xs text-[#6B7280]">Snap a photo to log expenses</p>
+          <p className="text-xs text-[#6B7280]">Powered by Tesseract OCR</p>
         </div>
-        <Camera className="text-[#0D9488]" size={20} />
+        <ScanLine className="text-[#0D9488]" size={20} />
       </div>
 
       {!preview ? (
@@ -114,15 +116,27 @@ export default function ReceiptScanner() {
           <div className="relative aspect-video rounded-xl overflow-hidden border border-[#0D9488]/10 bg-black/5">
             <img src={preview} alt="Receipt Preview" className="w-full h-full object-contain" />
             {loading && (
-              <div className="absolute inset-0 bg-white/60 backdrop-blur-sm flex flex-col items-center justify-center">
+              <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center gap-3">
                 <Loader2 className="animate-spin text-[#0D9488]" size={32} />
-                <p className="text-xs font-bold text-[#134E4A] mt-2">AI is reading...</p>
+                <div className="w-3/4 space-y-1">
+                  <div className="h-2 w-full bg-[#0D9488]/10 rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-[#0D9488] transition-all duration-300 rounded-full"
+                      style={{ width: `${ocrProgress}%` }}
+                    />
+                  </div>
+                  <p className="text-[10px] font-bold text-[#134E4A] text-center">
+                    {ocrProgress < 30 ? "Loading OCR engine..." : 
+                     ocrProgress < 85 ? "Reading text from image..." : 
+                     ocrProgress < 95 ? "AI is parsing receipt..." : "Almost done!"}
+                  </p>
+                </div>
               </div>
             )}
           </div>
 
           {result && (
-            <div className="p-4 rounded-xl bg-[#0D9488]/5 border border-[#0D9488]/10 space-y-3">
+            <div className="p-4 rounded-xl bg-[#0D9488]/5 border border-[#0D9488]/10 space-y-3 animate-in fade-in slide-in-from-bottom-2">
               <div className="flex justify-between items-start">
                 <div>
                   <p className="text-[10px] uppercase font-bold text-[#6B7280]">Merchant</p>
@@ -134,7 +148,10 @@ export default function ReceiptScanner() {
                 </div>
               </div>
               <div className="flex justify-between items-center pt-2 border-t border-[#0D9488]/10">
-                <p className="text-xs text-[#6B7280]">{result.date}</p>
+                <div>
+                  <p className="text-xs text-[#6B7280]">{result.date}</p>
+                  <p className="text-[10px] font-bold text-[#0D9488]">{result.category}</p>
+                </div>
                 <div className="flex gap-2">
                   <button onClick={() => { setPreview(null); setResult(null); }} className="p-2 text-rose-500 hover:bg-rose-50 rounded-lg">
                     <Trash2 size={16} />
