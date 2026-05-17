@@ -5,7 +5,7 @@ export default function HomePage() {
     <main className="mx-auto flex min-h-full w-full max-w-lg flex-1 flex-col justify-center gap-8 px-6 py-16">
       <div className="space-y-3">
         <p className="text-sm font-semibold uppercase tracking-wide text-[#0D9488]">
-          SpendSense
+          Spndr
         </p>
         <h1 className="text-4xl font-bold leading-tight">
           Track money without linking your bank

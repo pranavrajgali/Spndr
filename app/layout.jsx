@@ -8,7 +8,7 @@ const jakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata = {
-  title: "SpendSense",
+  title: "Spndr",
   description: "AI-powered personal finance for Indian college students",
   manifest: "/manifest.json",
 };

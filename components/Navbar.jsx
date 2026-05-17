@@ -42,7 +42,7 @@ export default function Navbar() {
           <div className="h-8 w-8 bg-[#0D9488] rounded-lg flex items-center justify-center text-white font-black shadow-lg shadow-[#0D9488]/20 transition-transform group-hover:scale-110">
             S
           </div>
-          <span className="text-lg font-black text-[#134E4A] tracking-tighter">SpendSense</span>
+          <span className="text-lg font-black text-[#134E4A] tracking-tighter">Spndr</span>
         </Link>
         
         <nav className="hidden gap-6 text-xs font-black uppercase tracking-widest text-[#6B7280] md:flex">
