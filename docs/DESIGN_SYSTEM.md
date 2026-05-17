@@ -6,7 +6,7 @@ The visual identity of Spndr. Use this as a reference when building new componen
 
 ## Brand Identity
 
-**Name:** Spndr (pronounced "Spender")
+**Name & Logo:** `spndr.` (all lowercase, extra bold tracking-tight wordmark, complete with a terminal period in brand teal)
 **Tagline:** Track money without linking your bank.
 **Personality:** Savage, honest, student-friendly, premium.
 

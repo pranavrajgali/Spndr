@@ -4,9 +4,9 @@ export default function HomePage() {
   return (
     <main className="mx-auto flex min-h-full w-full max-w-lg flex-1 flex-col justify-center gap-8 px-6 py-16">
       <div className="space-y-3">
-        <p className="text-sm font-semibold uppercase tracking-wide text-[#0D9488]">
-          Spndr
-        </p>
+        <span className="text-3xl font-extrabold tracking-tight text-[#0D9488]">
+          spndr.
+        </span>
         <h1 className="text-4xl font-bold leading-tight">
           Track money without linking your bank
         </h1>
