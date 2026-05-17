@@ -34,8 +34,8 @@ Spndr is an AI-powered financial dashboard designed specifically for students. I
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/pranavrajgali/SpendSense.git
-   cd SpendSense
+   git clone https://github.com/pranavrajgali/Spndr.git
+   cd Spndr
    ```
 
 2. Install dependencies:

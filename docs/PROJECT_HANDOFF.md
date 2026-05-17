@@ -268,7 +268,7 @@ User browser → Next.js pages (React)
   - `docs/` — created and moved `PROJECT_HANDOFF.md`, `SpendSense_Guide.md`, and architecture guide there
   - `.cursor/rules/update-project-handoff.mdc` — updated paths to `docs/`
   - `.gitignore` — recreated at root for flattened structure
-  - Git — linked to `https://github.com/pranavrajgali/SpendSense.git` and pushed to `main`
+  - Git — linked to `https://github.com/pranavrajgali/Spndr.git` and pushed to `main`
 - **Product:** Clean repo structure with documentation in `docs/` and code at the root. GitHub repo is now live.
 - **Notes:** Use `npm install` and `npm run dev` from the root now.
 
