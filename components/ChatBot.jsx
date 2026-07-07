@@ -11,11 +11,6 @@ export default function ChatBot() {
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef(null);
 
-  // Fetch history on load
-  useEffect(() => {
-    fetchHistory();
-  }, []);
-
   async function fetchHistory() {
     const supabase = createClient();
     const { data } = await supabase
@@ -26,6 +21,12 @@ export default function ChatBot() {
     
     if (data) setMessages(data);
   }
+
+  // Fetch history on load
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchHistory();
+  }, []);
 
   // Scroll to bottom when messages change
   useEffect(() => {
@@ -105,7 +106,7 @@ export default function ChatBot() {
           <div className="h-full flex flex-col items-center justify-center text-center space-y-2 opacity-50">
             <Bot size={40} className="text-[#0D9488]" />
             <p className="text-sm font-medium text-[#134E4A]">Ask me anything!</p>
-            <p className="text-xs text-[#6B7280]">"How much did I spend on food this week?"</p>
+            <p className="text-xs text-[#6B7280]">&ldquo;How much did I spend on food this week?&rdquo;</p>
           </div>
         )}
         

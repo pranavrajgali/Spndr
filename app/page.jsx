@@ -43,20 +43,20 @@ export default function HomePage() {
           {/* Badge indicator */}
           <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#0D9488]/10 border border-[#0D9488]/10 text-xs font-bold text-[#0D9488] tracking-wide">
             <Sparkles size={12} className="animate-pulse" />
-            <span>Savage AI Coach V1.1 is now live</span>
+            <span>AI Finance Assistant V1.1 is now live</span>
           </div>
 
           {/* Heading */}
           <div className="space-y-4">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black leading-[1.08] tracking-tight text-[#134E4A]">
               Track money.<br />
-              Get roasted.<br />
+              Get insights.<br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0D9488] to-[#0D9488]/70">
                 Actually save.
               </span>
             </h1>
             <p className="text-base sm:text-lg text-[#134E4A]/80 leading-relaxed font-medium">
-              The AI-powered financial command center built specifically for Indian college students. Log expenses in seconds, scan receipts, import UPI statement PDFs, and get brutally roasted by our Savage Coach when you blow ₹500 on Zomato.
+              The AI-powered financial command center built specifically for Indian college students. Log expenses in seconds, scan receipts, import UPI statement PDFs, and get helpful, constructive advice on your spending.
             </p>
           </div>
 
@@ -126,15 +126,15 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Card 2: The Savage AI Coach (Conversational roast demo) */}
+          {/* Card 2: The AI Assistant (Conversational demo) */}
           <div className="rounded-[24px] border border-[#0D9488]/20 bg-white/70 p-6 backdrop-blur-xl shadow-xl shadow-teal-900/5 space-y-4 transition-all hover:scale-[1.01] hover:border-[#0D9488]/30">
             <div className="flex items-center gap-2 pb-2 border-b border-[#0D9488]/10">
-              <div className="p-2 rounded-xl bg-rose-500/10 text-rose-500">
+              <div className="p-2 rounded-xl bg-[#0D9488]/10 text-[#0D9488]">
                 <Activity size={16} />
               </div>
               <div>
-                <h3 className="text-xs uppercase font-bold tracking-wider text-[#6B7280]">Savage Coach</h3>
-                <p className="text-xs font-black text-rose-600">Active roast mode</p>
+                <h3 className="text-xs uppercase font-bold tracking-wider text-[#6B7280]">AI Assistant</h3>
+                <p className="text-xs font-black text-[#0D9488]">Active mode</p>
               </div>
             </div>
             
@@ -147,10 +147,10 @@ export default function HomePage() {
                 <span className="text-[9px] font-bold text-[#6B7280]">Just now • UPI log</span>
               </div>
               <div className="flex flex-col gap-1 items-start mr-12 animate-in slide-in-from-left-2 duration-300">
-                <span className="px-3.5 py-2.5 rounded-2xl rounded-tl-none bg-rose-500/5 text-rose-900 font-semibold border border-rose-500/10 leading-relaxed shadow-sm">
-                  ☕ ₹1,200 for water, sugar, and milk? Did you buy the coffee machine or are you just renting the chair, you absolute clown? Your daily budget is literally ₹240. You just drank 5 days of your survival. Stick to tap water and Nescafé, brother.
+                <span className="px-3.5 py-2.5 rounded-2xl rounded-tl-none bg-[#0D9488]/5 text-[#134E4A] font-semibold border border-[#0D9488]/10 leading-relaxed shadow-sm">
+                  ☕ Logged ₹1,200 under Food & Drinks. Note: Your average daily budget is ₹240, so this purchase exceeds your typical daily limit. Consider preparing coffee at home to stay within budget!
                 </span>
-                <span className="text-[9px] font-extrabold text-rose-500 uppercase tracking-wider">Spndr AI Coach • Savage response</span>
+                <span className="text-[9px] font-extrabold text-[#0D9488] uppercase tracking-wider">Spndr AI Assistant • Auto-logged</span>
               </div>
             </div>
           </div>
