@@ -47,8 +47,9 @@ export default function Navbar() {
         <nav className="hidden gap-6 text-xs font-black uppercase tracking-widest text-[#6B7280] md:flex">
           <Link href="/dashboard" className="hover:text-[#0D9488] transition-colors">Home</Link>
           <Link href="/dashboard/history" className="hover:text-[#0D9488] transition-colors">History</Link>
+          <Link href="/dashboard/transactions" className="hover:text-[#0D9488] transition-colors">Add Transaction</Link>
           <Link href="/dashboard/budgets" className="hover:text-[#0D9488] transition-colors">Budgets</Link>
-          <Link href="/dashboard/chat" className="hover:text-[#0D9488] transition-colors">AI Coach</Link>
+          <Link href="/dashboard/chat" className="hover:text-[#0D9488] transition-colors">AI Assistant</Link>
         </nav>
 
         <div className="relative">
