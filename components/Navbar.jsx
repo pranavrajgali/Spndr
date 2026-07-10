@@ -71,6 +71,15 @@ export default function Navbar() {
                   <p className="text-[10px] font-black uppercase tracking-widest text-[#6B7280]">Account Settings</p>
                 </div>
                 
+                <Link
+                  href="/dashboard/settings"
+                  onClick={() => setShowMenu(false)}
+                  className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-[#374151] hover:bg-[#0D9488]/5 hover:text-[#0D9488] transition-all"
+                >
+                  <Settings size={18} />
+                  Settings & Accounts
+                </Link>
+
                 <button 
                   onClick={handleLogout}
                   className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-[#374151] hover:bg-[#0D9488]/5 hover:text-[#0D9488] transition-all"

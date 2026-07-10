@@ -115,6 +115,17 @@ CREATE TABLE IF NOT EXISTS csv_imports (
   created_at     TIMESTAMPTZ DEFAULT NOW()
 );
 
+CREATE TABLE IF NOT EXISTS linked_accounts (
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id     UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  name        TEXT NOT NULL,
+  balance     NUMERIC(12,2) NOT NULL DEFAULT 0,
+  is_special  BOOLEAN DEFAULT FALSE,
+  created_at  TIMESTAMPTZ DEFAULT NOW(),
+  updated_at  TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(user_id, name)
+);
+
 -- ---------------------------------------------------------------------------
 -- Indexes
 -- ---------------------------------------------------------------------------
@@ -127,6 +138,7 @@ CREATE INDEX IF NOT EXISTS idx_budgets_user_id ON budgets(user_id);
 CREATE INDEX IF NOT EXISTS idx_gold_user_id ON gold(user_id);
 CREATE INDEX IF NOT EXISTS idx_receipts_user_id ON receipts(user_id);
 CREATE INDEX IF NOT EXISTS idx_chat_user_id ON chat_messages(user_id);
+CREATE INDEX IF NOT EXISTS idx_linked_accounts_user_id ON linked_accounts(user_id);
 
 -- ---------------------------------------------------------------------------
 -- Wallet balance trigger (INSERT / hard DELETE on transactions)
@@ -165,12 +177,14 @@ ALTER TABLE receipts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE ai_insights ENABLE ROW LEVEL SECURITY;
 ALTER TABLE chat_messages ENABLE ROW LEVEL SECURITY;
 ALTER TABLE csv_imports ENABLE ROW LEVEL SECURITY;
+ALTER TABLE linked_accounts ENABLE ROW LEVEL SECURITY;
 
 -- Drop old policies if re-running (idempotent-ish)
 DO $$ DECLARE t TEXT; BEGIN
   FOREACH t IN ARRAY ARRAY[
     'user_profile','balances','wallets','transactions','budgets',
-    'gold','receipts','ai_insights','chat_messages','csv_imports'
+    'gold','receipts','ai_insights','chat_messages','csv_imports',
+    'linked_accounts'
   ] LOOP
     EXECUTE format('DROP POLICY IF EXISTS user_isolation ON %I', t);
     EXECUTE format(
